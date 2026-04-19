@@ -18,11 +18,7 @@ A modern and responsive real estate website designed to showcase properties and 
 
 ## 🌐 Live Demo
 
-(Add your GitHub Pages link here)
-
-## 📸 Preview
-
-(Add screenshots of the website here)
+(https://saturnsolutions.github.io/real-estate-website-egypt/)
 
 ## 💡 Purpose
 
