@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAREK — Luxury Real Estate Egypt</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/*═══ FOUNDATION ═══*/
+:root{
+  --c1:#0C0C0E;--c2:#141417;--c3:#1C1C21;--c4:#26262D;--c5:#35353E;
+  --gold:#B8963E;--gold2:#D4B263;--gold3:#F0D68A;--gold-a:rgba(184,150,62,.12);
+  --w:#F2EDE4;--w2:#C8C0B4;--w3:#8A8278;--w4:#5C574F;
+  --serif:'Instrument Serif','Noto Kufi Arabic',serif;
+  --sans:'Syne','Noto Kufi Arabic',sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--c1);color:var(--w);-webkit-font-smoothing:antialiased;cursor:default;overflow-x:hidden}
+body[dir="rtl"]{font-family:'Noto Kufi Arabic','Syne',sans-serif}
+::selection{background:var(--gold);color:var(--c1)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--c1)}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px}
+a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
+
+/*═══ CUSTOM CURSOR ═══*/
+.cursor{width:20px;height:20px;border:1.5px solid var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:width .3s var(--ease),height .3s var(--ease),border .3s;mix-blend-mode:difference;transform:translate(-50%,-50%)}
+.cursor.hover{width:60px;height:60px;border-color:var(--gold3);background:rgba(184,150,62,.06)}
+@media(max-width:768px){.cursor{display:none}}
+
+/*═══ GRAIN ═══*/
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/*═══ LOADER ═══*/
+.loader{position:fixed;inset:0;background:var(--c1);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity .8s var(--ease),visibility .8s}
+.loader.hide{opacity:0;visibility:hidden}
+.loader-bar{width:200px;height:1px;background:var(--c4);position:relative;overflow:hidden}
+.loader-fill{position:absolute;top:0;left:0;height:100%;background:var(--gold);animation:load 2s var(--ease) forwards}
+@keyframes load{to{width:100%}}
+.loader-text{font-family:var(--serif);font-size:14px;color:var(--w3);letter-spacing:6px;text-transform:uppercase}
+
+/*═══ HEADER ═══*/
+.hd{position:fixed;top:0;left:0;right:0;z-index:500;padding:24px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .5s var(--ease)}
+.hd.solid{padding:16px 48px;background:rgba(12,12,14,.92);backdrop-filter:blur(30px) saturate(1.5);border-bottom:1px solid rgba(184,150,62,.06)}
+.hd-logo{font-family:var(--serif);font-size:28px;font-weight:400;letter-spacing:8px;color:var(--gold2);transition:var(--ease) .3s}
+.hd-logo span{font-style:italic;color:var(--w)}
+.hd-nav{display:flex;align-items:center;gap:32px}
+.hd-link{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--w3);position:relative;padding:4px 0;transition:color .3s}
+.hd-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--gold);transition:width .4s var(--ease)}
+.hd-link:hover,.hd-link.on{color:var(--w)}
+.hd-link:hover::after,.hd-link.on::after{width:100%}
+.hd-lang{font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:8px 20px;border:1px solid var(--c5);color:var(--w3);transition:all .3s}
+.hd-lang:hover{border-color:var(--gold);color:var(--gold)}
+.hd-menu{display:none;flex-direction:column;gap:4px;padding:8px;cursor:pointer}
+.hd-menu span{width:24px;height:1.5px;background:var(--w);transition:var(--ease) .3s}
+
+/*═══ MOBILE NAV ═══*/
+.mnav{position:fixed;inset:0;background:var(--c1);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;opacity:0;visibility:hidden;transition:all .5s var(--ease)}
+.mnav.open{opacity:1;visibility:visible}
+.mnav .hd-link{font-size:24px;letter-spacing:5px}
+.mnav-close{position:absolute;top:24px;right:24px;font-size:32px;color:var(--w3)}
+
+/*═══ HERO — CINEMATIC ═══*/
+.hero{height:100vh;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-gradient{position:absolute;inset:0;background:
+  radial-gradient(ellipse at 30% 20%,rgba(184,150,62,.07) 0%,transparent 50%),
+  radial-gradient(ellipse at 70% 80%,rgba(184,150,62,.04) 0%,transparent 40%),
+  linear-gradient(180deg,rgba(12,12,14,.2) 0%,rgba(12,12,14,.1) 40%,rgba(12,12,14,.85) 75%,var(--c1) 100%)
+}
+.hero-grid{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(184,150,62,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(184,150,62,.03) 1px,transparent 1px);
+  background-size:80px 80px;animation:gridMove 40s linear infinite}
+@keyframes gridMove{to{background-position:80px 80px}}
+.hero-lines{position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:100%;background:linear-gradient(transparent,rgba(184,150,62,.08) 30%,rgba(184,150,62,.08) 70%,transparent)}
+.hero-line2{left:25%}.hero-line3{left:75%}
+
+.hero-content{position:relative;z-index:2;padding:0 80px 100px;width:100%;max-width:1600px;margin:0 auto}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:28px;opacity:0;animation:slideUp .8s var(--ease) .5s forwards}
+.hero-eyebrow::before{content:'';width:40px;height:1px;background:var(--gold)}
+.hero-eyebrow span{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold)}
+.hero-h1{font-family:var(--serif);font-size:clamp(48px,7vw,96px);font-weight:400;line-height:1;letter-spacing:-2px;margin-bottom:32px;overflow:hidden}
+.hero-h1 .line{display:block;opacity:0;animation:slideUp .9s var(--ease) forwards}
+.hero-h1 .line:nth-child(1){animation-delay:.7s}
+.hero-h1 .line:nth-child(2){animation-delay:.85s}
+.hero-h1 .line i{font-style:italic;color:var(--gold2)}
+.hero-sub{font-size:15px;color:var(--w3);max-width:500px;line-height:1.8;margin-bottom:40px;opacity:0;animation:slideUp .8s var(--ease) 1.1s forwards}
+.hero-cta{display:flex;align-items:center;gap:24px;opacity:0;animation:slideUp .8s var(--ease) 1.3s forwards}
+.cta-main{padding:18px 48px;background:var(--gold);color:var(--c1);font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;transition:all .4s var(--ease);position:relative;overflow:hidden}
+.cta-main::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .6s}
+.cta-main:hover::before{left:100%}
+.cta-main:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 20px 60px rgba(184,150,62,.2)}
+.cta-line{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--w3);transition:color .3s}
+.cta-line:hover{color:var(--gold)}
+.cta-line::after{content:'→';transition:transform .3s}
+.cta-line:hover::after{transform:translateX(6px)}
+body[dir="rtl"] .cta-line::after{content:'←'}
+body[dir="rtl"] .cta-line:hover::after{transform:translateX(-6px)}
+
+/* Hero scroll indicator */
+.scroll-ind{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;opacity:0;animation:slideUp .8s var(--ease) 1.6s forwards}
+.scroll-line{width:1px;height:40px;background:linear-gradient(var(--gold),transparent);animation:scrollPulse 2s ease infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+.scroll-text{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--w4)}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+/*═══ SECTION ═══*/
+.sec{max-width:1600px;margin:0 auto;padding:140px 80px}
+.sec-sm{padding:100px 80px}
+.eyebrow{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.sec-h{font-family:var(--serif);font-size:clamp(32px,4vw,56px);font-weight:400;line-height:1.15;letter-spacing:-1px}
+.sec-h i{font-style:italic;color:var(--gold2)}
+.sec-desc{font-size:14px;color:var(--w3);max-width:480px;line-height:1.9;margin-top:16px}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:64px;flex-wrap:wrap}
+
+/*═══ EDITORIAL PROPERTY GRID ═══*/
+.ed-grid{display:grid;gap:2px;grid-template-columns:repeat(12,1fr);grid-auto-rows:320px}
+.ed-grid .pc:nth-child(1){grid-column:span 7;grid-row:span 2}
+.ed-grid .pc:nth-child(2){grid-column:span 5}
+.ed-grid .pc:nth-child(3){grid-column:span 5}
+.ed-grid .pc:nth-child(4){grid-column:span 4}
+.ed-grid .pc:nth-child(5){grid-column:span 4}
+.ed-grid .pc:nth-child(6){grid-column:span 4}
+
+.pc{position:relative;overflow:hidden;cursor:pointer;background:var(--c2)}
+.pc-bg{position:absolute;inset:0;transition:transform .8s var(--ease)}
+.pc:hover .pc-bg{transform:scale(1.06)}
+.pc-over{position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(12,12,14,.75) 70%,rgba(12,12,14,.92));z-index:1;transition:background .5s}
+.pc:hover .pc-over{background:linear-gradient(transparent 10%,rgba(12,12,14,.6) 60%,rgba(12,12,14,.85))}
+.pc-content{position:absolute;bottom:0;left:0;right:0;padding:32px;z-index:2;transform:translateY(10px);transition:transform .5s var(--ease)}
+.pc:hover .pc-content{transform:translateY(0)}
+.pc-type{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.pc-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:4px;line-height:1.3}
+.pc-loc{font-size:11px;color:var(--w3);display:flex;align-items:center;gap:4px}
+.pc-price{font-family:var(--serif);font-size:24px;color:var(--gold2);margin-top:12px;letter-spacing:1px}
+.pc-details{display:flex;gap:20px;margin-top:14px;opacity:0;transform:translateY(10px);transition:all .4s var(--ease) .1s}
+.pc:hover .pc-details{opacity:1;transform:translateY(0)}
+.pc-det{font-size:11px;color:var(--w3);display:flex;align-items:center;gap:4px}
+.pc-det::before{content:'';width:3px;height:3px;background:var(--gold);border-radius:50%}
+.pc-tag{position:absolute;top:20px;left:20px;z-index:2;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1)}
+body[dir="rtl"] .pc-tag{left:auto;right:20px}
+.pc-tag.ft{background:rgba(184,150,62,.85);color:var(--c1);border-color:transparent}
+.pc-tag.nw{background:rgba(255,255,255,.1);color:var(--w)}
+.pc-tag.ht{background:rgba(220,60,60,.7);color:#fff;border-color:transparent}
+
+/*═══ MARQUEE ═══*/
+.marquee{overflow:hidden;padding:48px 0;border-top:1px solid var(--c3);border-bottom:1px solid var(--c3);margin:80px 0 0}
+.marquee-track{display:flex;gap:64px;animation:marquee 30s linear infinite;width:max-content}
+.marquee-item{font-family:var(--serif);font-size:48px;font-weight:400;color:var(--c4);white-space:nowrap;display:flex;align-items:center;gap:24px}
+.marquee-item .dot{width:8px;height:8px;background:var(--gold);border-radius:50%}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/*═══ SERVICES ═══*/
+.srv-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--c3)}
+.srv{background:var(--c1);padding:48px 36px;transition:background .5s var(--ease);position:relative;overflow:hidden}
+.srv::before{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width .6s var(--ease)}
+.srv:hover::before{width:100%}
+.srv:hover{background:var(--c2)}
+.srv-num{font-family:var(--serif);font-size:48px;color:var(--c4);margin-bottom:20px;transition:color .4s}
+.srv:hover .srv-num{color:var(--gold-a);color:var(--gold)}
+.srv-t{font-family:var(--serif);font-size:22px;margin-bottom:10px}
+.srv-d{font-size:12.5px;color:var(--w4);line-height:1.8}
+
+/*═══ STATS BAND ═══*/
+.stats-band{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--c3);margin:0}
+.stat-b{background:var(--c1);padding:56px 40px;text-align:center}
+.stat-n{font-family:var(--serif);font-size:56px;color:var(--gold2);letter-spacing:-2px}
+.stat-l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--w4);margin-top:8px}
+
+/*═══ AREAS — HORIZONTAL SCROLL ═══*/
+.areas-scroll{display:flex;gap:16px;overflow-x:auto;padding:0 80px 24px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.areas-scroll::-webkit-scrollbar{display:none}
+.ar-card{min-width:340px;height:440px;position:relative;overflow:hidden;scroll-snap-align:start;flex-shrink:0;cursor:pointer}
+.ar-card:first-child{min-width:500px}
+.ar-bg{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.ar-card:hover .ar-bg{transform:scale(1.05)}
+.ar-over{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(12,12,14,.9));z-index:1}
+.ar-info{position:absolute;bottom:32px;left:32px;z-index:2}
+body[dir="rtl"] .ar-info{left:auto;right:32px}
+.ar-name{font-family:var(--serif);font-size:28px;margin-bottom:4px}
+.ar-count{font-size:11px;color:var(--gold);letter-spacing:2px}
+
+/*═══ TESTIMONIALS — EDITORIAL ═══*/
+.test-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--c3)}
+.tst{background:var(--c1);padding:48px;display:flex;flex-direction:column}
+.tst-quote{font-family:var(--serif);font-size:72px;color:var(--gold);line-height:.8;margin-bottom:16px}
+.tst-text{font-family:var(--serif);font-size:18px;font-style:italic;line-height:1.8;color:var(--w2);flex:1}
+.tst-author{margin-top:28px;padding-top:20px;border-top:1px solid var(--c3)}
+.tst-name{font-size:13px;font-weight:600;letter-spacing:1px}
+.tst-role{font-size:11px;color:var(--w4);margin-top:2px}
+
+/*═══ CTA ═══*/
+.cta-full{padding:140px 80px;text-align:center;position:relative;overflow:hidden}
+.cta-full::before{content:'';position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(184,150,62,.06),transparent 70%);border-radius:50%}
+.cta-h{font-family:var(--serif);font-size:clamp(36px,5vw,64px);max-width:700px;margin:0 auto 20px;line-height:1.15}
+.cta-p{font-size:14px;color:var(--w3);max-width:440px;margin:0 auto 36px;line-height:1.8}
+
+/*═══ FOOTER ═══*/
+.ft{border-top:1px solid var(--c3);padding:80px 80px 32px;max-width:1600px;margin:0 auto}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:64px}
+.ft-brand{font-family:var(--serif);font-size:24px;letter-spacing:6px;color:var(--gold2);margin-bottom:16px}
+.ft-desc{font-size:13px;color:var(--w4);line-height:1.8;max-width:300px}
+.ft-col h5{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.ft-col a{display:block;font-size:13px;color:var(--w4);padding:5px 0;transition:color .3s,padding .3s}
+.ft-col a:hover{color:var(--gold);padding-inline-start:8px}
+.ft-bottom{margin-top:60px;padding-top:24px;border-top:1px solid var(--c3);display:flex;justify-content:space-between;font-size:11px;color:var(--w4);letter-spacing:1px}
+
+/*═══ PAGES ═══*/
+.pg{display:none}.pg.on{display:block}
+
+/*═══ ALL PROPS PAGE ═══*/
+.props-page-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.props-page-grid .pc{min-height:400px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px}
+.f-chip{padding:10px 24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--c4);color:var(--w4);transition:all .3s}
+.f-chip:hover,.f-chip.on{border-color:var(--gold);color:var(--gold);background:var(--gold-a)}
+
+/*═══ CONTACT ═══*/
+.cnt-split{display:grid;grid-template-columns:1fr 1fr;min-height:80vh}
+.cnt-left{background:var(--c2);padding:120px 80px 80px;display:flex;flex-direction:column;justify-content:center}
+.cnt-right{padding:120px 80px 80px;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.ci{padding:14px 0;border-bottom:1px solid var(--c3);display:flex;align-items:center;gap:16px;font-size:14px;color:var(--w2)}
+.ci-ic{font-size:20px;width:32px;text-align:center}
+.cnt-input{padding:16px 0;background:transparent;border:none;border-bottom:1px solid var(--c4);color:var(--w);font-size:14px;font-family:inherit;transition:border-color .3s;width:100%}
+.cnt-input:focus{outline:none;border-color:var(--gold)}
+.cnt-input::placeholder{color:var(--w4)}
+textarea.cnt-input{resize:none;min-height:100px;border:1px solid var(--c4);padding:16px;margin-top:8px}
+textarea.cnt-input:focus{border-color:var(--gold)}
+
+/*═══ ABOUT ═══*/
+.abt-hero{padding:200px 80px 100px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1600px;margin:0 auto}
+.abt-img{height:500px;background:var(--c2);border:1px solid var(--c3);display:flex;align-items:center;justify-content:center;font-size:120px;position:relative;overflow:hidden}
+.abt-img::before{content:'';position:absolute;inset:0;border:1px solid rgba(184,150,62,.1);margin:16px}
+
+/*═══ RESPONSIVE ═══*/
+@media(max-width:1024px){
+  .ed-grid{grid-template-columns:1fr 1fr;grid-auto-rows:280px}
+  .ed-grid .pc:nth-child(1){grid-column:span 2;grid-row:span 1}
+  .ed-grid .pc:nth-child(n){grid-column:span 1}
+  .srv-row{grid-template-columns:1fr 1fr}
+  .test-row{grid-template-columns:1fr}
+  .stats-band{grid-template-columns:1fr 1fr}
+  .ft-grid{grid-template-columns:1fr 1fr}
+  .props-page-grid{grid-template-columns:1fr 1fr}
+  .cnt-split{grid-template-columns:1fr}
+  .abt-hero{grid-template-columns:1fr;padding:160px 40px 60px}
+}
+@media(max-width:768px){
+  .hd{padding:16px 20px}.hd.solid{padding:12px 20px}
+  .hd-nav{display:none}
+  .hd-menu{display:flex}
+  .hero-content{padding:0 24px 60px}
+  .sec,.sec-sm{padding:80px 24px}
+  .cta-full{padding:80px 24px}
+  .ft{padding:60px 24px 24px}
+  .ft-grid{grid-template-columns:1fr;gap:32px}
+  .ed-grid{grid-template-columns:1fr;grid-auto-rows:300px}
+  .ed-grid .pc:nth-child(1){grid-column:span 1}
+  .srv-row{grid-template-columns:1fr}
+  .stats-band{grid-template-columns:1fr 1fr}
+  .props-page-grid{grid-template-columns:1fr}
+  .areas-scroll{padding:0 24px 20px}
+  .ar-card{min-width:280px;height:360px}
+  .ar-card:first-child{min-width:280px}
+  .cnt-left,.cnt-right{padding:80px 24px 40px}
+  .marquee-item{font-size:32px}
+  .ft-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body dir="ltr" id="app">
+
+<!-- LOADER -->
+<div class="loader" id="loader"><div class="loader-text">DAREK</div><div class="loader-bar"><div class="loader-fill"></div></div></div>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- MOBILE NAV -->
+<div class="mnav" id="mnav">
+  <button class="mnav-close" onclick="closeMnav()">✕</button>
+  <button class="hd-link" onclick="go('home');closeMnav()" data-i="nav_home"></button>
+  <button class="hd-link" onclick="go('properties');closeMnav()" data-i="nav_props"></button>
+  <button class="hd-link" onclick="go('about');closeMnav()" data-i="nav_about"></button>
+  <button class="hd-link" onclick="go('contact');closeMnav()" data-i="nav_contact"></button>
+  <button class="hd-lang" onclick="switchLang();closeMnav()" id="mLang"></button>
+</div>
+
+<!-- HEADER -->
+<header class="hd" id="hd">
+  <a class="hd-logo" href="#" onclick="go('home')">DAR<span>EK</span></a>
+  <nav class="hd-nav">
+    <button class="hd-link on" onclick="go('home')" id="nHome" data-i="nav_home"></button>
+    <button class="hd-link" onclick="go('properties')" id="nProps" data-i="nav_props"></button>
+    <button class="hd-link" onclick="go('about')" id="nAbout" data-i="nav_about"></button>
+    <button class="hd-link" onclick="go('contact')" id="nContact" data-i="nav_contact"></button>
+    <button class="hd-lang" onclick="switchLang()" id="dLang"></button>
+  </nav>
+  <div class="hd-menu" onclick="openMnav()"><span></span><span></span><span></span></div>
+</header>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="pg on" id="pg-home">
+
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-lines"></div>
+    <div class="hero-lines hero-line2"></div>
+    <div class="hero-lines hero-line3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span data-i="h_eye"></span></div>
+    <h1 class="hero-h1" id="heroH1"></h1>
+    <p class="hero-sub" data-i="h_sub"></p>
+    <div class="hero-cta">
+      <button class="cta-main" onclick="go('properties')" data-i="h_cta1"></button>
+      <button class="cta-line" onclick="go('contact')" data-i="h_cta2"></button>
+    </div>
+  </div>
+  <div class="scroll-ind"><div class="scroll-line"></div><span class="scroll-text" data-i="h_scroll"></span></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee"><div class="marquee-track" id="marqTrack"></div></div>
+
+<!-- FEATURED -->
+<section class="sec" id="featSec">
+  <div class="sec-top">
+    <div><div class="eyebrow" data-i="f_eye"></div><h2 class="sec-h" data-i="f_h"></h2><p class="sec-desc" data-i="f_desc"></p></div>
+    <button class="cta-line" onclick="go('properties')" data-i="f_all"></button>
+  </div>
+  <div class="ed-grid" id="edGrid"></div>
+</section>
+
+<!-- SERVICES -->
+<section><div class="srv-row" id="srvRow"></div></section>
+
+<!-- STATS -->
+<section><div class="stats-band" id="statsBand"></div></section>
+
+<!-- AREAS -->
+<section class="sec-sm">
+  <div class="sec-top"><div><div class="eyebrow" data-i="a_eye"></div><h2 class="sec-h" data-i="a_h"></h2></div></div>
+  <div class="areas-scroll" id="areasScroll"></div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section><div class="test-row" id="testRow"></div></section>
+
+<!-- CTA -->
+<section class="cta-full">
+  <div class="eyebrow" style="text-align:center;margin-bottom:20px" data-i="cta_eye"></div>
+  <h2 class="cta-h" data-i="cta_h"></h2>
+  <p class="cta-p" data-i="cta_p"></p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+    <button class="cta-main" onclick="go('contact')" data-i="cta_b1"></button>
+    <button class="cta-line" data-i="cta_b2"></button>
+  </div>
+</section>
+</div>
+
+<!-- ══════════ PROPERTIES ══════════ -->
+<div class="pg" id="pg-properties">
+<section class="sec" style="padding-top:160px">
+  <div class="sec-top"><div><div class="eyebrow" data-i="ap_eye"></div><h2 class="sec-h" data-i="ap_h"></h2></div></div>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="props-page-grid" id="allGrid"></div>
+</section>
+</div>
+
+<!-- ══════════ ABOUT ══════════ -->
+<div class="pg" id="pg-about">
+<div class="abt-hero">
+  <div><div class="eyebrow" data-i="ab_eye"></div><h2 class="sec-h" data-i="ab_h"></h2><p class="sec-desc" style="margin-top:24px" data-i="ab_p1"></p><p class="sec-desc" style="margin-top:16px" data-i="ab_p2"></p>
+  <div style="display:flex;gap:48px;margin-top:48px">
+    <div><div class="stat-n" style="font-size:40px">2,500+</div><div class="stat-l" data-i="s_prop"></div></div>
+    <div><div class="stat-n" style="font-size:40px">15+</div><div class="stat-l" data-i="s_yr"></div></div>
+    <div><div class="stat-n" style="font-size:40px">98%</div><div class="stat-l" data-i="s_sat"></div></div>
+  </div></div>
+  <div class="abt-img">🏛️</div>
+</div>
+</div>
+
+<!-- ══════════ CONTACT ══════════ -->
+<div class="pg" id="pg-contact">
+<div class="cnt-split">
+  <div class="cnt-left">
+    <div class="eyebrow" data-i="cn_eye"></div>
+    <h2 class="sec-h" style="margin-bottom:32px" data-i="cn_h"></h2>
+    <div id="cntInfo"></div>
+  </div>
+  <div class="cnt-right" id="cntForm"></div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ft">
+  <div class="ft-grid">
+    <div><div class="ft-brand">DAREK</div><p class="ft-desc" data-i="ft_desc"></p></div>
+    <div class="ft-col"><h5 data-i="ft_nav"></h5><a href="#" onclick="go('home')" data-i="nav_home"></a><a href="#" onclick="go('properties')" data-i="nav_props"></a><a href="#" onclick="go('about')" data-i="nav_about"></a><a href="#" onclick="go('contact')" data-i="nav_contact"></a></div>
+    <div class="ft-col"><h5 data-i="ft_areas"></h5><a href="#">New Cairo</a><a href="#">North Coast</a><a href="#">New Capital</a><a href="#">Sheikh Zayed</a><a href="#">Ain Sokhna</a></div>
+    <div class="ft-col"><h5 data-i="ft_cnt"></h5><a href="#">📞 19XXX</a><a href="#">✉️ info@darek.eg</a><a href="#" data-i="ft_addr"></a><a href="#">🕐 9AM – 6PM</a></div>
+  </div>
+  <div class="ft-bottom"><span>© 2026 DAREK</span><span data-i="ft_rights"></span></div>
+</footer>
+
+<script>
+const T={
+  nav_home:{en:'Home',ar:'الرئيسية'},nav_props:{en:'Properties',ar:'العقارات'},nav_about:{en:'About',ar:'من نحن'},nav_contact:{en:'Contact',ar:'تواصل'},
+  h_eye:{en:'Premium Real Estate — Egypt',ar:'عقارات فاخرة — مصر'},
+  h_h1:{en:'<span class="line">Discover Residences</span><span class="line">of <i>Distinction</i></span>',ar:'<span class="line">اكتشف منازل</span><span class="line">بـ<i>تميّز استثنائي</i></span>'},
+  h_sub:{en:'Curated luxury properties across Egypt\'s most prestigious addresses — from Nile-view penthouses to North Coast retreats.',ar:'عقارات فاخرة مختارة بعناية في أرقى عناوين مصر — من بنتهاوس بإطلالة على النيل لشاليهات الساحل الشمالي.'},
+  h_cta1:{en:'Explore Collection',ar:'تصفح المجموعة'},h_cta2:{en:'Book a Viewing',ar:'احجز معاينة'},h_scroll:{en:'Scroll',ar:'تصفح'},
+  f_eye:{en:'Featured Properties',ar:'عقارات مميزة'},f_h:{en:'Handpicked <i>Residences</i>',ar:'منازل مختارة <i>بعناية</i>'},
+  f_desc:{en:'Each property in our collection has been personally selected for its exceptional quality, prime location, and investment potential.',ar:'كل عقار في مجموعتنا تم اختياره شخصياً لجودته الاستثنائية وموقعه المتميز وإمكانياته الاستثمارية.'},
+  f_all:{en:'View All Properties',ar:'كل العقارات'},
+  a_eye:{en:'Prime Locations',ar:'مواقع متميزة'},a_h:{en:'Explore Egypt\'s <i>Finest</i> Areas',ar:'اكتشف أرقى مناطق <i>مصر</i>'},
+  cta_eye:{en:'Start Your Journey',ar:'ابدأ رحلتك'},cta_h:{en:'Your Dream Home <i>Awaits</i>',ar:'منزل أحلامك <i>في انتظارك</i>'},
+  cta_p:{en:'Let our experts guide you to the perfect property. Complimentary consultation with no obligations.',ar:'خلّي خبراءنا يوجهوك للعقار المثالي. استشارة مجانية بدون أي التزام.'},
+  cta_b1:{en:'Get Started',ar:'ابدأ الآن'},cta_b2:{en:'Call 19XXX',ar:'اتصل 19XXX'},
+  ap_eye:{en:'All Properties',ar:'كل العقارات'},ap_h:{en:'Browse Our <i>Collection</i>',ar:'تصفح <i>مجموعتنا</i>'},
+  ab_eye:{en:'Our Story',ar:'قصتنا'},ab_h:{en:'Building Dreams <i>Since 2010</i>',ar:'نبني الأحلام <i>منذ 2010</i>'},
+  ab_p1:{en:'DAREK is Egypt\'s premier luxury real estate advisory, specializing in premium residential and commercial properties across Greater Cairo, the North Coast, and the New Administrative Capital.',ar:'دارك هي المستشار العقاري الفاخر الأول في مصر، متخصصة في العقارات السكنية والتجارية المتميزة في القاهرة الكبرى والساحل الشمالي والعاصمة الإدارية.'},
+  ab_p2:{en:'With over 15 years of experience and 2,500+ properties, we deliver personalized service and market expertise that transforms your real estate aspirations into reality.',ar:'بخبرة 15+ عاماً و2,500+ عقار، نقدم خدمة شخصية وخبرة سوقية تحوّل طموحاتك العقارية لواقع.'},
+  cn_eye:{en:'Get in Touch',ar:'تواصل معنا'},cn_h:{en:'Let\'s Discuss Your <i>Vision</i>',ar:'خلينا نتكلم عن <i>رؤيتك</i>'},
+  cn_name:{en:'Full Name',ar:'الاسم'},cn_email:{en:'Email',ar:'البريد'},cn_phone:{en:'Phone',ar:'الموبايل'},cn_msg:{en:'Message',ar:'رسالتك'},cn_send:{en:'Send Message',ar:'إرسال'},
+  cn_off:{en:'Head Office',ar:'المقر الرئيسي'},cn_off_v:{en:'New Cairo, 5th Settlement',ar:'القاهرة الجديدة، التجمع الخامس'},
+  s_prop:{en:'Properties',ar:'عقار'},s_yr:{en:'Years',ar:'سنة'},s_sat:{en:'Satisfaction',ar:'رضا'},s_clients:{en:'Clients',ar:'عميل'},
+  ft_desc:{en:'Egypt\'s premier luxury real estate advisory. Exceptional properties, exceptional service.',ar:'المستشار العقاري الفاخر الأول في مصر. عقارات استثنائية، خدمة استثنائية.'},
+  ft_nav:{en:'Navigation',ar:'التنقل'},ft_areas:{en:'Locations',ar:'المناطق'},ft_cnt:{en:'Contact',ar:'تواصل'},ft_addr:{en:'📍 New Cairo, Egypt',ar:'📍 القاهرة الجديدة'},ft_rights:{en:'All Rights Reserved',ar:'جميع الحقوق محفوظة'},
+  bed:{en:'Beds',ar:'غرف'},bath:{en:'Baths',ar:'حمام'},m2:{en:'m²',ar:'م²'},
+  f_all_f:{en:'All',ar:'الكل'},f_villa:{en:'Villas',ar:'فيلات'},f_apt:{en:'Apartments',ar:'شقق'},f_dup:{en:'Duplex',ar:'دوبلكس'},f_pent:{en:'Penthouse',ar:'بنتهاوس'},f_chalet:{en:'Chalets',ar:'شاليهات'},
+};
+const L=(e,a)=>lang==='en'?e:a;
+let lang=localStorage.getItem('dk_lang')||'en';
+
+const props=[
+  {type:{en:'Villa',ar:'فيلا'},title:{en:'Palm Hills Royal Villa',ar:'فيلا ملكية — بالم هيلز'},loc:{en:'6th of October',ar:'6 أكتوبر'},price:'18,500,000',beds:5,baths:4,area:420,tag:'ft',cat:'villa',clr:'#1B3A2A'},
+  {type:{en:'Apartment',ar:'شقة'},title:{en:'Hyde Park Residence',ar:'شقة هايد بارك'},loc:{en:'New Cairo',ar:'القاهرة الجديدة'},price:'4,200,000',beds:3,baths:2,area:185,tag:'nw',cat:'apt',clr:'#1A2744'},
+  {type:{en:'Penthouse',ar:'بنتهاوس'},title:{en:'Nile Tower Sky Suite',ar:'سكاي سويت — أبراج النيل'},loc:{en:'Zamalek',ar:'الزمالك'},price:'32,000,000',beds:4,baths:3,area:350,tag:'ft',cat:'pent',clr:'#2A1A3A'},
+  {type:{en:'Duplex',ar:'دوبلكس'},title:{en:'Madinaty Garden Duplex',ar:'دوبلكس بحديقة — مدينتي'},loc:{en:'New Cairo',ar:'القاهرة الجديدة'},price:'7,800,000',beds:4,baths:3,area:280,tag:'nw',cat:'dup',clr:'#3A2A1A'},
+  {type:{en:'Chalet',ar:'شاليه'},title:{en:'Hacienda Bay Seafront',ar:'هاسيندا باي — واجهة بحرية'},loc:{en:'North Coast',ar:'الساحل الشمالي'},price:'9,500,000',beds:3,baths:2,area:160,tag:'ht',cat:'chalet',clr:'#1A3A3A'},
+  {type:{en:'Villa',ar:'فيلا'},title:{en:'Mountain View iCity',ar:'ماونتن فيو آي سيتي'},loc:{en:'New Capital',ar:'العاصمة الإدارية'},price:'12,000,000',beds:5,baths:4,area:360,tag:'nw',cat:'villa',clr:'#2A3A1A'},
+  {type:{en:'Apartment',ar:'شقة'},title:{en:'Zed East Smart Living',ar:'زيد إيست — سمارت ليفينج'},loc:{en:'New Cairo',ar:'القاهرة الجديدة'},price:'3,600,000',beds:2,baths:1,area:130,tag:'nw',cat:'apt',clr:'#1A1A3A'},
+  {type:{en:'Penthouse',ar:'بنتهاوس'},title:{en:'O West Panoramic',ar:'أو ويست بانوراميك'},loc:{en:'6th of October',ar:'أكتوبر'},price:'15,200,000',beds:4,baths:3,area:290,tag:'ft',cat:'pent',clr:'#3A1A2A'},
+  {type:{en:'Chalet',ar:'شاليه'},title:{en:'Marassi Mediterranean',ar:'مراسي — البحر المتوسط'},loc:{en:'North Coast',ar:'الساحل الشمالي'},price:'11,800,000',beds:3,baths:2,area:180,tag:'ht',cat:'chalet',clr:'#0A2A2A'},
+];
+
+function propBG(c,t){return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect fill="${c}" width="800" height="600"/><rect fill="rgba(0,0,0,.2)" width="800" height="600"/><text x="400" y="280" text-anchor="middle" font-family="serif" font-size="160" fill="rgba(255,255,255,.04)">⌂</text><text x="400" y="340" text-anchor="middle" font-family="serif" font-size="16" fill="rgba(255,255,255,.15)" letter-spacing="4">${t}</text></svg>`)}`}
+function areaBG(c){return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><rect fill="${c}" width="600" height="800"/><rect fill="rgba(0,0,0,.25)" width="600" height="800"/><text x="300" y="420" text-anchor="middle" font-family="serif" font-size="200" fill="rgba(255,255,255,.03)">🏙</text></svg>`)}`}
+
+function propCard(p){
+  const tl={ft:{en:'Featured',ar:'مميز',c:'ft'},nw:{en:'New',ar:'جديد',c:'nw'},ht:{en:'Hot',ar:'حصري',c:'ht'}};
+  const t=tl[p.tag];
+  return `<div class="pc"><img class="pc-bg" src="${propBG(p.clr,p.title.en)}" alt="${p.title[lang]}"><div class="pc-over"></div><div class="pc-tag ${t.c}">${t[lang]}</div><div class="pc-content"><div class="pc-type">${p.type[lang]}</div><div class="pc-title">${p.title[lang]}</div><div class="pc-loc">◇ ${p.loc[lang]}</div><div class="pc-price">${p.price} ${L('EGP','ج.م')}</div><div class="pc-details"><span class="pc-det">${p.beds} ${T.bed[lang]}</span><span class="pc-det">${p.baths} ${T.bath[lang]}</span><span class="pc-det">${p.area} ${T.m2[lang]}</span></div></div></div>`;
+}
+
+function switchLang(){lang=lang==='en'?'ar':'en';localStorage.setItem('dk_lang',lang);apply()}
+function apply(){
+  const a=document.getElementById('app');a.dir=lang==='ar'?'rtl':'ltr';a.lang=lang;
+  document.querySelectorAll('[data-i]').forEach(e=>{const k=e.dataset.i;if(T[k])e.innerHTML=T[k][lang]});
+  document.getElementById('heroH1').innerHTML=T.h_h1[lang];
+  ['dLang','mLang'].forEach(id=>document.getElementById(id).textContent=lang==='en'?'عربي':'EN');
+  renderAll();
+}
+
+function renderAll(){
+  // Featured
+  document.getElementById('edGrid').innerHTML=props.slice(0,6).map(propCard).join('');
+  // All props
+  const cats=['all','villa','apt','dup','pent','chalet'];
+  const cL={all:T.f_all_f,villa:T.f_villa,apt:T.f_apt,dup:T.f_dup,pent:T.f_pent,chalet:T.f_chalet};
+  document.getElementById('filterRow').innerHTML=cats.map(c=>`<button class="f-chip ${aFilt===c?'on':''}" onclick="filt('${c}')">${cL[c][lang]}</button>`).join('');
+  const fl=aFilt==='all'?props:props.filter(p=>p.cat===aFilt);
+  document.getElementById('allGrid').innerHTML=fl.map(propCard).join('');
+  // Services
+  const srvs=[
+    {n:'01',t:{en:'Acquisition',ar:'شراء'},d:{en:'Expert guidance through Egypt\'s premium property market with full legal support.',ar:'توجيه متخصص في سوق العقارات المتميز في مصر مع دعم قانوني كامل.'}},
+    {n:'02',t:{en:'Disposition',ar:'بيع'},d:{en:'Strategic marketing to connect your property with qualified buyers worldwide.',ar:'تسويق استراتيجي لربط عقارك بمشترين مؤهلين حول العالم.'}},
+    {n:'03',t:{en:'Management',ar:'إدارة'},d:{en:'Comprehensive property management — maintenance, tenants, and value optimization.',ar:'إدارة عقارات شاملة — صيانة، مستأجرين، وتحسين القيمة.'}},
+    {n:'04',t:{en:'Advisory',ar:'استشارات'},d:{en:'Data-driven investment insights for maximum ROI in Egypt\'s evolving market.',ar:'رؤى استثمارية مبنية على بيانات لأعلى عائد في سوق مصر المتطور.'}},
+  ];
+  document.getElementById('srvRow').innerHTML=srvs.map(s=>`<div class="srv"><div class="srv-num">${s.n}</div><div class="srv-t">${s.t[lang]}</div><div class="srv-d">${s.d[lang]}</div></div>`).join('');
+  // Stats
+  document.getElementById('statsBand').innerHTML=[
+    {n:'2,500+',l:T.s_prop},{n:'1,200+',l:T.s_clients},{n:'15+',l:T.s_yr},{n:'98%',l:T.s_sat}
+  ].map(s=>`<div class="stat-b"><div class="stat-n">${s.n}</div><div class="stat-l">${s.l[lang]}</div></div>`).join('');
+  // Areas
+  const areas=[
+    {name:{en:'New Cairo & 5th Settlement',ar:'القاهرة الجديدة'},n:850,c:'#1B3A2A'},
+    {name:{en:'North Coast',ar:'الساحل الشمالي'},n:420,c:'#0A2A3A'},
+    {name:{en:'New Capital',ar:'العاصمة الإدارية'},n:380,c:'#2A1A3A'},
+    {name:{en:'Sheikh Zayed & October',ar:'الشيخ زايد وأكتوبر'},n:560,c:'#3A2A0A'},
+    {name:{en:'Ain Sokhna',ar:'العين السخنة'},n:290,c:'#1A2A2A'},
+  ];
+  document.getElementById('areasScroll').innerHTML=areas.map(a=>`<div class="ar-card"><img class="ar-bg" src="${areaBG(a.c)}" alt="${a.name[lang]}"><div class="ar-over"></div><div class="ar-info"><div class="ar-name">${a.name[lang]}</div><div class="ar-count">${a.n}+ ${L('Properties','عقار')}</div></div></div>`).join('');
+  // Testimonials
+  const tests=[
+    {txt:{en:'DAREK transformed our property search into an effortless experience. Their attention to detail and market knowledge is unmatched.',ar:'دارك حوّلت رحلة بحثنا عن عقار لتجربة سلسة. اهتمامهم بالتفاصيل ومعرفتهم بالسوق لا يُضاهى.'},name:{en:'Ahmed Hassan',ar:'أحمد حسن'},role:{en:'CEO, TechVentures',ar:'رئيس تنفيذي'}},
+    {txt:{en:'The investment advisory team provided exceptional insights. Our portfolio value increased 45% in under two years.',ar:'فريق الاستشارات قدم رؤى استثنائية. قيمة محفظتنا زادت 45% في أقل من سنتين.'},name:{en:'Sara Khalil',ar:'سارة خليل'},role:{en:'Investment Director',ar:'مديرة استثمار'}},
+    {txt:{en:'From the North Coast chalet to our New Cairo apartment — DAREK handles everything with impeccable professionalism.',ar:'من شاليه الساحل لشقة القاهرة الجديدة — دارك بيتعاملوا مع كل حاجة باحترافية.'},name:{en:'Omar Farid',ar:'عمر فريد'},role:{en:'Architect',ar:'مهندس معماري'}},
+  ];
+  document.getElementById('testRow').innerHTML=tests.map(t=>`<div class="tst"><div class="tst-quote">"</div><div class="tst-text">${t.txt[lang]}</div><div class="tst-author"><div class="tst-name">${t.name[lang]}</div><div class="tst-role">${t.role[lang]}</div></div></div>`).join('');
+  // Marquee
+  const mq=['New Cairo','North Coast','Zamalek','Sheikh Zayed','New Capital','Ain Sokhna','Maadi','Madinaty'];
+  document.getElementById('marqTrack').innerHTML=(mq.concat(mq)).map(m=>`<span class="marquee-item"><span class="dot"></span>${m}</span>`).join('');
+  // Contact
+  document.getElementById('cntInfo').innerHTML=`
+    <div class="ci"><span class="ci-ic">📍</span><div><div style="font-size:11px;color:var(--w4)">${T.cn_off[lang]}</div><div>${T.cn_off_v[lang]}</div></div></div>
+    <div class="ci"><span class="ci-ic">📞</span><div>+20 19XXX</div></div>
+    <div class="ci"><span class="ci-ic">✉️</span><div>info@darek.eg</div></div>
+    <div class="ci"><span class="ci-ic">🕐</span><div>${L('Sun–Thu 9AM–6PM','أحد–خميس 9ص–6م')}</div></div>`;
+  document.getElementById('cntForm').innerHTML=`
+    <input class="cnt-input" placeholder="${T.cn_name[lang]}">
+    <input class="cnt-input" placeholder="${T.cn_email[lang]}">
+    <input class="cnt-input" placeholder="${T.cn_phone[lang]}">
+    <textarea class="cnt-input" placeholder="${T.cn_msg[lang]}"></textarea>
+    <button class="cta-main" style="align-self:flex-start">${T.cn_send[lang]}</button>`;
+}
+
+let aFilt='all';
+function filt(c){aFilt=c;renderAll()}
+
+// ROUTING
+function go(p){
+  document.querySelectorAll('.pg').forEach(e=>e.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.querySelectorAll('.hd-nav .hd-link').forEach(l=>l.classList.remove('on'));
+  const m={home:'nHome',properties:'nProps',about:'nAbout',contact:'nContact'};
+  if(m[p])document.getElementById(m[p]).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// MOBILE
+function openMnav(){document.getElementById('mnav').classList.add('open')}
+function closeMnav(){document.getElementById('mnav').classList.remove('open')}
+
+// HEADER
+window.addEventListener('scroll',()=>document.getElementById('hd').classList.toggle('solid',scrollY>60));
+
+// CURSOR
+const cur=document.getElementById('cursor');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});
+document.querySelectorAll('button,a,.pc,.ar-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('hover'));
+});
+
+// LOADER
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hide'),2200));
+
+// INIT
+apply();
+</script>
+</body>
+</html>
